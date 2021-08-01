@@ -10,6 +10,7 @@ import UIKit
 class ViewController: UITableViewController {
     var pictures = [String]()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -24,6 +25,7 @@ class ViewController: UITableViewController {
                 pictures.append(item)
             }
         }
+        pictures.sort()
         
         
         
@@ -52,6 +54,8 @@ class ViewController: UITableViewController {
             
             vc.selectedImage = pictures[indexPath.row]
             navigationController?.pushViewController(vc, animated: true)
+            vc.selectedIndex = indexPath.row + 1
+            vc.numOfImages = pictures.count 
         }
     }
     
