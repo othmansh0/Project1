@@ -31,7 +31,7 @@ class ViewController: UITableViewController {
         
        
         navigationController?.navigationBar.prefersLargeTitles = true
-
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
     }
 
 
@@ -57,6 +57,17 @@ class ViewController: UITableViewController {
             vc.selectedIndex = indexPath.row + 1
             vc.numOfImages = pictures.count 
         }
+    }
+    
+    
+    
+    @objc func shareTapped() {
+         let item = ["This is a great app"]
+        let vc = UIActivityViewController(activityItems: item, applicationActivities:[])
+        present(vc,animated: true)
+        
+        
+        
     }
     
 }
