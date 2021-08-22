@@ -15,17 +15,8 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         
         title = "Storm Viewer"
-        
-        let fm = FileManager.default
-        let path = Bundle.main.resourcePath!
-        let items = try! fm.contentsOfDirectory(atPath: path)
-
-        for item in items {
-            if item.hasPrefix("nssl") {
-                pictures.append(item)
-            }
-        }
-        pictures.sort()
+        //Loading data in background
+        performSelector(inBackground: #selector(loadImages), with: nil)
         
         
         
@@ -68,6 +59,20 @@ class ViewController: UITableViewController {
         
         
         
+    }
+    
+    @objc func loadImages(){
+        let fm = FileManager.default
+        let path = Bundle.main.resourcePath!
+        let items = try! fm.contentsOfDirectory(atPath: path)
+
+        for item in items {
+            if item.hasPrefix("nssl") {
+                pictures.append(item)
+            }
+        }
+        pictures.sort()
+        tableView.performSelector(onMainThread: #selector(tableView.reloadData), with: nil, waitUntilDone: false)
     }
     
 }
