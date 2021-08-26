@@ -7,7 +7,11 @@
 
 import UIKit
 
-class ViewController: UITableViewController {
+class ViewController: UICollectionViewController {
+   
+    
+    
+    
     var pictures = [String]()
     
     
@@ -20,34 +24,51 @@ class ViewController: UITableViewController {
         
         
         
-       
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
+        DispatchQueue.main.async { [weak self ] in
+            self?.navigationController?.navigationBar.prefersLargeTitles = true
+            self?.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self?.shareTapped))
+        }
+     
     }
 
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+   
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return pictures.count
     }
     
   
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+  
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Picture", for:indexPath )
-        cell.textLabel?.text = pictures[indexPath.row]
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Picture", for:indexPath ) as? NsslCell else {fatalError("We are fucked")}
+            
+            cell.imageName.text = pictures[indexPath.item]
+           
+        cell.image2.image = UIImage(named: pictures[indexPath.item])
+     
+       
+        
+
+        
         return cell
     }
     
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
+ 
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
             
-            vc.selectedImage = pictures[indexPath.row]
+            vc.selectedImage = pictures[indexPath.item]
             navigationController?.pushViewController(vc, animated: true)
-            vc.selectedIndex = indexPath.row + 1
-            vc.numOfImages = pictures.count 
+            vc.selectedIndex = indexPath.item + 1
+            vc.numOfImages = pictures.count
         }
+        
     }
     
     
@@ -72,7 +93,18 @@ class ViewController: UITableViewController {
             }
         }
         pictures.sort()
-        tableView.performSelector(onMainThread: #selector(tableView.reloadData), with: nil, waitUntilDone: false)
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.collectionView.performSelector(onMainThread: #selector(self?.collectionView.reloadData), with: nil, waitUntilDone: false)
+        }
+     
+    }
+    
+    
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
     
 }
